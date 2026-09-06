@@ -1,5 +1,7 @@
 # Spectral Clustering für nicht-konvexe Sammel-Routen – Streamlit-Demo
 
+**[→ Demo live ausprobieren](https://sebastianhanisch-spectral-demo.streamlit.app/)**
+
 Achtes Stück der "Konzepte"-Reihe für die Website "Sebastian Hanisch – Operations
 Research und Machine Learning", **dritter unabhängiger Zweig ab [kmeans-demo](../kmeans-demo)**
 (neben dem Dichte-Zweig dbscan-demo+agglomerative-demo→hdbscan-demo und dem
