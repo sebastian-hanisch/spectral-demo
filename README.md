@@ -13,8 +13,13 @@ kmeans-demo → dbscan-demo ──┐
                              ├──> hdbscan-demo   (löst BEIDE: über Dichte)
               agglomerative-demo ──────────┘
 kmeans-demo → gmm-demo → dpmm-demo             (löst NUR "kein k": über Bayesianische Nichtparametrik)
-kmeans-demo → spectral-demo                     (löst NUR Nicht-Konvexität: über Graphentheorie)
+kmeans-demo → spectral-demo → leiden-demo       (löst NUR Nicht-Konvexität, dann auch "kein k": über Graphentheorie/Modularität)
 ```
+
+[leiden-demo](../leiden-demo) setzt diese Demo fort und behebt genau die hier offen
+benannte verbleibende Schwäche - die Clusterzahl k muss weiterhin vorab feststehen -
+über Modularitätsoptimierung (Leiden-Algorithmus) statt über die hier gezeigte
+Eigenzerlegung.
 
 **Bewusst gewählter, ehrlicher Kontrast zu DBSCAN, nicht Redundanz**: klassisches
 Spectral Clustering (Ng, Jordan & Weiss, 2002) braucht am Ende trotzdem **k-Means auf
