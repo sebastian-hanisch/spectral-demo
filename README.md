@@ -48,7 +48,7 @@ Die Presets legen zwei getrennte Achsen offen:
   funktionieren würde (Baseline, kein Alleinstellungsmerkmal nötig).
 - **Nicht-konvexe Formen (Halbmonde)**: der Kernnachweis - eine k-Means-Baseline auf
   denselben Rohdaten scheitert an der Konvexitätsannahme, Spectral Clustering trennt
-  sauber.
+  sauber (bei k = 2; siehe "Grenze des k-Means-Schritts" unten für k ≥ 3).
 - **Falsches k**: richtige Graph-Konstruktion, aber eine andere Ziel-Clusteranzahl als
   die wahre Gruppenzahl - zeigt die ehrliche Botschaft der Demo: Spectral Clustering
   behebt k-Means' "k muss vorab feststehen"-Schwäche **nicht**. Die
@@ -69,6 +69,22 @@ funktioniert, obwohl es auf den rohen Koordinaten scheitern würde), (4) das fin
 Cluster-Ergebnis. Kleinmultiples zeigen dieselben Daten mit unterschiedlichen
 `n_neighbors`-Werten nebeneinander. Punktfarben nutzen das portfolioweite dynamische
 HSL-Farbrad-Schema für Cluster jenseits der festen 8-Farben-Palette.
+
+## Grenze des k-Means-Schritts (Zufalls-Init ohne Neustarts)
+
+Der letzte Schritt ist ein einfaches Lloyd's-k-Means: Start mit k zufälligen Datenpunkten der
+Einbettung, **ein** Lauf, kein k-Means++ und keine Neustarts (anders als `sklearn`, das mit
+k-Means++ und mehreren Neustarts rechnet). Die Einbettung trennt die Gruppen bei passender
+Graph-Konstruktion sauber, aber ein ungünstiger Start legt zwei Startpunkte in dieselbe Gruppe
+und lässt eine andere zusammengelegt - der Rand-Index fällt dann unter 1 (typisch etwa 0.88
+bei k = 4), obwohl die Spektral-Einbettung selbst in Ordnung ist. Gemessen im App-Ablauf
+(Init-Seed = Szenario-Seed, 150 Punkte, Streuung 0.08, n_neighbors = 10, Seeds 0-99): bei k = 2
+liegt der Rand-Index praktisch immer bei 1.00, bei k = 3 in rund einem Viertel und bei k = 4 in
+gut der Hälfte der Seeds unter 0.99; mit dem besten von 10 Startwerten erreichen dieselben
+Szenarien 1.00. Die Aussagen "trennt sauber" und "zuverlässig" gelten deshalb für k = 2 und
+die Presets, nicht für jeden Seed bei k ≥ 3 (`tests/test_oracle_spectral.py`). Der Vergleichs-
+abschnitt nutzt dagegen einen festen Init-Seed (`COMPARISON_SEED`), seine Werte sind für ein
+gegebenes Szenario reproduzierbar, aber ebenfalls nur ein einzelner Start.
 
 ## Sicherheitsgrenzen
 
@@ -96,7 +112,7 @@ HSL-Farbrad-Schema für Cluster jenseits der festen 8-Farben-Palette.
   Übereinstimmung, toleranzbasiert wie bei hdbscan-demo, kein exaktes Zahlen-Match
   nötig, da Implementierungsdetails wie Eigenvektor-Vorzeichen frei variieren dürfen).
 - **Kern-Behauptungen der Demo direkt getestet**: Spectral Clustering trennt Halbmonde
-  zuverlässig, wo eine k-Means-Baseline auf denselben Rohdaten nachweislich scheitert
+  (k = 2, Presets und getestete Seeds) zuverlässig, wo eine k-Means-Baseline auf denselben Rohdaten nachweislich scheitert
   (`test_spectral_clustering_solves_moons_where_kmeans_baseline_fails`); ein falsches
   Ziel-k schadet Spectral Clustering ebenso
   (`test_wrong_k_hurts_spectral_clustering_too`,

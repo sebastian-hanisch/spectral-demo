@@ -110,7 +110,7 @@ Animation ist eine Phase, keine Iteration.
 st.caption("🎯 Schnellstart – ein Beispielszenario laden:")
 PRESET_HELP = {
     "Einfaches Beispiel": "Konvexe Gruppen, richtiges k - funktioniert, wie k-Means auch funktionieren würde.",
-    "Nicht-konvexe Formen (Halbmonde)": "k-Means scheitert grundsätzlich, Spectral Clustering trennt sauber.",
+    "Nicht-konvexe Formen (Halbmonde)": "k-Means scheitert grundsätzlich, Spectral Clustering trennt sauber (bei k = 2; bei k ≥ 3 kann ein ungünstiger k-Means-Start das Ergebnis verschlechtern).",
     "Falsches k": "Richtige Graph-Konstruktion, aber k falsch gewählt - zeigt, dass Spectral Clustering diese k-Means-Schwäche NICHT behebt.",
     "Schwierige Graph-Konstruktion": "n_neighbors schlecht gewählt - eigene Parameterempfindlichkeit, analog zu DBSCANs eps.",
 }
@@ -291,7 +291,10 @@ Kanten dazwischen und vielen, starken Kanten darin bevorzugt.
 
 **Letzter Schritt**: k-Means auf den Zeilen der Einbettung, nicht auf den Rohdaten - genau
 hier steckt weiterhin k-Means' "k muss feststehen"-Schwäche, unverändert gegenüber
-k-Means selbst.
+k-Means selbst. Dazu kommt der **Zufallsstart**: dieses k-Means startet einmal mit k zufälligen
+Punkten der Einbettung (kein k-Means++, keine Neustarts). Bei k ≥ 3 kann ein ungünstiger Start
+zwei Gruppen zusammenlegen und eine andere teilen, obwohl die Einbettung sie sauber trennt; ein
+anderer Zufalls-Seed zeigt das. Bei k = 2 passiert das praktisch nie.
 
 Implementiert in `sp_algorithm.py` (Ähnlichkeitsgraph, Laplace, Eigenzerlegung, finales
 Lloyd's) und `sp_evaluation.py` (Rand-Index, Methoden-Vergleich).
